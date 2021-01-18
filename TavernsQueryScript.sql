@@ -32,10 +32,15 @@ VALUES ('owner', 'owner of tavern'),
 DROP TABLE IF EXISTS [users];
 
 CREATE TABLE [users] (
-ID int NOT NULL PRIMARY KEY IDENTITY(1,1),
+--ID int NOT NULL PRIMARY KEY IDENTITY(1,1),
+ID INT NOT NULL IDENTITY(1,1),
 userName VARCHAR(250) NOT NULL,
-roleId INT NOT NULL FOREIGN KEY REFERENCES roles(ID)
+--roleId INT NOT NULL FOREIGN KEY REFERENCES roles(ID)
+roleId INT NOT NULL
 );
+--adding PK and FK using Alter Table
+ALTER TABLE [users] ADD PRIMARY KEY (ID)
+ALTER TABLE [users] ADD FOREIGN KEY (roleId) REFERENCES roles(ID)
 
 INSERT INTO [users] (userName, roleId)
 VALUES ('Mandalorian', 1),
@@ -49,12 +54,19 @@ VALUES ('Mandalorian', 1),
 DROP TABLE IF EXISTS [taverns];
 
 CREATE TABLE [taverns] (
-ID int NOT NULL PRIMARY KEY IDENTITY(1,1),
+--ID int NOT NULL PRIMARY KEY IDENTITY(1,1),
+ID int NOT NULL IDENTITY(1,1),
 tavernName VARCHAR(250) NOT NULL,
-locationId INT NOT NULL FOREIGN KEY REFERENCES locations(ID),
-ownerId INT NOT NULL FOREIGN KEY REFERENCES users(ID),
+--locationId INT NOT NULL FOREIGN KEY REFERENCES locations(ID),
+locationId INT NOT NULL,
+--ownerId INT NOT NULL FOREIGN KEY REFERENCES users(ID),
+ownerId INT NOT NULL,
 numberOfFloors INT NOT NULL
 );
+--adding PK and FK using Alter Table
+ALTER TABLE [taverns] ADD PRIMARY KEY (ID)
+ALTER TABLE [taverns] ADD FOREIGN KEY (locationId) REFERENCES locations(ID)
+ALTER TABLE [taverns] ADD FOREIGN KEY (ownerId) REFERENCES users(ID)
 
 INSERT INTO [taverns] (tavernName, locationId, ownerId, numberOfFloors)
 VALUES ('Red Lion', 5, 1, 2),
@@ -189,3 +201,50 @@ VALUES (1, 'Agnes Doyle', $30.00, '01/02/2021', $45.00, 3),
 (5, 'Marsha Black', $40.00, '01/02/2021', $75.00, 5),
 (2, 'Lindsey Robbins ', $60.00, '01/02/2021', $85.00, 4),
 (4, 'Albert Vega ', $70.00, '01/02/2021', $95.00, 2);
+
+--guestStatus table
+--independent table - constraint to allow only - sick, fine, hangry, raging and placid
+DROP TABLE IF EXISTS [guestStatus]
+
+CREATE TABLE [guestStatus] (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+status VARCHAR(250) NOT NULL,
+CONSTRAINT chk_status CHECK (status IN ('sick', 'fine', 'hangry', 'raging', 'placid'))
+);
+
+INSERT INTO [guestStatus] (status)
+VALUES ('sick'), ('fine'), ('hangry'), ('raging'), ('placid')
+
+--class table
+--independent table
+DROP TABLE IF EXISTS [class]
+
+CREATE TABLE [class] (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+className VARCHAR(250) NOT NULL 
+);
+
+--guests table
+--depends on taverns table, guestStatus table and class table
+DROP TABLE IF EXISTS [guests]
+
+CREATE TABLE [guests] (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+tavernsId INT NOT NULL FOREIGN KEY REFERENCES taverns(ID),
+guestName VARCHAR(250) NOT NULL,
+notes VARCHAR(250) NOT NULL,
+birthday DATE NOT NULL,
+cakeday DATE NOT NULL,
+guestStatusId INT NOT NULL FOREIGN KEY REFERENCES guestStatus(ID),
+classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
+);
+
+--levels table
+--depends on guests table and class table
+DROP TABLE IF EXISTS [levels]
+
+CREATE TABLE [levels] (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+guestId INT NOT NULL FOREIGN KEY REFERENCES guests(ID),
+classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
+);
