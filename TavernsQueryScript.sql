@@ -267,6 +267,13 @@ classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
 INSERT INTO [levels] (guestId, classId)
 VALUES (1, 5), (2, 4), (3, 3), (4, 2), (5, 1);
 
+--Insertion Failure
+--The INSERT statement conflicted with the FOREIGN KEY constraint
+--INSERT INTO [levels] (guestId, classId)
+--VALUES (6, 5)
+
+
+
 --Supply-Sales table
 --depends on sales table and supplies table
 DROP TABLE IF EXISTS [supplySales];
