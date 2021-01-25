@@ -1,3 +1,8 @@
+--Drop Tables in correct order
+DROP TABLE IF EXISTS basementRats, levels, supplyReceived, inventory, supplySales;
+DROP TABLE IF EXISTS sales, guests, supplies, services, taverns, users;
+DROP TABLE IF EXISTS class, guestStatus, servicesStatus, locations, roles;
+
 -- locations table
 -- INDEPENDENT table
 DROP TABLE IF EXISTS [locations];
@@ -213,7 +218,7 @@ CONSTRAINT chk_status CHECK (status IN ('sick', 'fine', 'hangry', 'raging', 'pla
 );
 
 INSERT INTO [guestStatus] (status)
-VALUES ('sick'), ('fine'), ('hangry'), ('raging'), ('placid')
+VALUES ('sick'), ('fine'), ('hangry'), ('raging'), ('placid');
 
 --class table
 --independent table
@@ -224,13 +229,16 @@ ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 className VARCHAR(250) NOT NULL 
 );
 
+INSERT INTO [class] (className)
+VALUES ('fighter'), ('tank'), ('mage'), ('summoner'), ('bard')
+
 --guests table
 --depends on taverns table, guestStatus table and class table
 DROP TABLE IF EXISTS [guests]
 
 CREATE TABLE [guests] (
 ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-tavernsId INT NOT NULL FOREIGN KEY REFERENCES taverns(ID),
+tavernId INT NOT NULL FOREIGN KEY REFERENCES taverns(ID),
 guestName VARCHAR(250) NOT NULL,
 notes VARCHAR(250) NOT NULL,
 birthday DATE NOT NULL,
@@ -238,6 +246,13 @@ cakeday DATE NOT NULL,
 guestStatusId INT NOT NULL FOREIGN KEY REFERENCES guestStatus(ID),
 classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
 );
+
+INSERT INTO [guests] (tavernId, guestName, notes, birthday, cakeday, guestStatusId, classId)
+VALUES (3, 'Agnes Doyle', 'likes oshizushi', '01/01/1980', '01/01/2021', 3, 5 ),
+(4, 'Patti Flores', 'likes californial roll', '02/01/1980', '01/02/2021', 4, 4 ),
+(1, 'Marsha Black', 'likes nare zushi', '03/01/1980', '01/03/2021', 1, 3 ),
+(2, 'Lindsey Robbins', 'likes makizushi', '04/01/1980', '01/04/2021', 2, 2 ),
+(5, 'Albert Vega', 'likes tuna roll', '05/01/1980', '01/05/2021', 5, 1 );
 
 --levels table
 --depends on guests table and class table
@@ -248,3 +263,19 @@ ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 guestId INT NOT NULL FOREIGN KEY REFERENCES guests(ID),
 classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
 );
+
+INSERT INTO [levels] (guestId, classId)
+VALUES (1, 5), (2, 4), (3, 3), (4, 2), (5, 1);
+
+--Supply-Sales table
+--depends on sales table and supplies table
+DROP TABLE IF EXISTS [supplySales];
+
+CREATE TABLE [supplySales] (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+salesID INT NOT NULL FOREIGN KEY REFERENCES sales(ID),
+supplyID INT NOT NULL FOREIGN KEY REFERENCES supplies(ID)
+);
+
+INSERT INTO [supplySales] (salesId, supplyID)
+VALUES (1, 5), (2, 4), (3, 3), (4, 2), (5, 1);
