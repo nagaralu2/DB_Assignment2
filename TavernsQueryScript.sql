@@ -1,7 +1,7 @@
 --Drop Tables in correct order
-DROP TABLE IF EXISTS basementRats, levels, supplyReceived, inventory, supplySales;
-DROP TABLE IF EXISTS sales, guests, supplies, services, taverns, users;
-DROP TABLE IF EXISTS class, guestStatus, servicesStatus, locations, roles;
+DROP TABLE IF EXISTS basementRats, levels, supplyReceived, inventory, supplySales, roomSales;
+DROP TABLE IF EXISTS roomStays, sales, guests, supplies, services, taverns, users;
+DROP TABLE IF EXISTS class, guestStatus, servicesStatus, locations, roles, roomStatus;
 
 -- locations table
 -- INDEPENDENT table
@@ -243,16 +243,15 @@ guestName VARCHAR(250) NOT NULL,
 notes VARCHAR(250) NOT NULL,
 birthday DATE NOT NULL,
 cakeday DATE NOT NULL,
-guestStatusId INT NOT NULL FOREIGN KEY REFERENCES guestStatus(ID),
-classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
+guestStatusId INT NOT NULL FOREIGN KEY REFERENCES guestStatus(ID)
 );
 
-INSERT INTO [guests] (tavernId, guestName, notes, birthday, cakeday, guestStatusId, classId)
-VALUES (3, 'Agnes Doyle', 'likes oshizushi', '01/01/1980', '01/01/2021', 3, 5 ),
-(4, 'Patti Flores', 'likes californial roll', '02/01/1980', '01/02/2021', 4, 4 ),
-(1, 'Marsha Black', 'likes nare zushi', '03/01/1980', '01/03/2021', 1, 3 ),
-(2, 'Lindsey Robbins', 'likes makizushi', '04/01/1980', '01/04/2021', 2, 2 ),
-(5, 'Albert Vega', 'likes tuna roll', '05/01/1980', '01/05/2021', 5, 1 );
+INSERT INTO [guests] (tavernId, guestName, notes, birthday, cakeday, guestStatusId)
+VALUES (3, 'Agnes Doyle', 'likes oshizushi', '01/01/1980', '01/01/2021', 3),
+(4, 'Patti Flores', 'likes californial roll', '02/01/1990', '01/02/2021', 4),
+(1, 'Marsha Black', 'likes nare zushi', '03/01/2000', '01/03/2021', 1),
+(2, 'Lindsey Robbins', 'likes makizushi', '04/01/2010', '01/04/2021', 2),
+(5, 'Albert Vega', 'likes tuna roll', '05/01/1980', '01/05/2021', 5);
 
 --levels table
 --depends on guests table and class table
@@ -261,16 +260,17 @@ DROP TABLE IF EXISTS [levels]
 CREATE TABLE [levels] (
 ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 guestId INT NOT NULL FOREIGN KEY REFERENCES guests(ID),
-classId INT NOT NULL FOREIGN KEY REFERENCES class(ID)
+classId INT NOT NULL FOREIGN KEY REFERENCES class(ID),
+level INT NOT NULL
 );
 
-INSERT INTO [levels] (guestId, classId)
-VALUES (1, 5), (2, 4), (3, 3), (4, 2), (5, 1);
+INSERT INTO [levels] (guestId, classId, level)
+VALUES (1, 5, 23), (2, 4, 13), (3, 3, 5), (4, 2, 2), (5, 1, 33), (5, 3, 3);
 
 --Insertion Failure
 --The INSERT statement conflicted with the FOREIGN KEY constraint
---INSERT INTO [levels] (guestId, classId)
---VALUES (6, 5)
+--INSERT INTO [levels] (guestId, classId, level)
+--VALUES (6, 5, 22)
 
 
 
